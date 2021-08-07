@@ -4,23 +4,6 @@ import os
 from OpenGL.GL import*
 from PIL import Image
 
-if not glfw.init():
-    raise RuntimeError('Could not initialize GLFW3')
-window = glfw.create_window(800,800,'mapTest',None,None)
-
-def init():
-    glClearColor(0.0,0.0,1.0,1.0)
-    display()
-
-
-def load_texture():
-    map1_path = os.path.join(os.path.dirname(__file__), u"data\\TowaruIcon.png")
-    img = Image.open(map1_path,'r')
-    w,h = img.size
-    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img.tobytes())
-
-def window_refresh():
-    display()
 
 def display():
 
@@ -58,25 +41,43 @@ def display():
 
     glfw.swap_buffers(window)
 
-    glFlush()
+    #glFlush()
 
+def init():
+    glClearColor(0.0,0.0,1.0,1.0)
+    display()
+
+def window_refresh(window):
+    display()
+
+def load_texture():
+    map1_path = os.path.join(os.path.dirname(__file__), u"data\\TowaruIcon.png")
+    img = Image.open(map1_path,'r')
+    w,h = img.size
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img.tobytes())
+
+if not glfw.init():
+    raise RuntimeError('Could not initialize GLFW3')
+
+window = glfw.create_window(800,800,'mapTest',None,None)
+
+if not window:
+    glfw.terminate()
+    raise RuntimeError('Could not create window')
+
+glfw.set_window_refresh_callback(window,window_refresh)
+glfw.make_context_current(window)
 
 load_texture()
 init()
 glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
 glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)
 
-if not window:
-    glfw.terminate()
-    raise RuntimeError('Could not create window')
-
-glfw.set_window_refresh_callback(window,display())
-glfw.make_context_current(window)
 
 while not glfw.window_should_close(window):
     glfw.wait_events()
 
-window_refresh()
+window_refresh(window)
 glfw.terminate()
 
 
