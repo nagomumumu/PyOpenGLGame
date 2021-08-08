@@ -15,7 +15,7 @@ def display():
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    glOrtho(-0.5,viewport[2] - 0.5,viewport[3] - 0.5,-0.5,-1.0,1.0)
+    glOrtho(-0.5,viewport[2] - 0.5,viewport[3] - 0.5, -0.5, -1.0, 1.0)
 
 
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)
@@ -23,20 +23,35 @@ def display():
 
     glEnable(GL_TEXTURE_2D)
 
+    
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
 
     glBegin(GL_QUADS)
-    glTexCoord2d(0.0,0.0)
-    glVertex2d(0, 0)
-    glTexCoord2d(0.0,1.0)
-    glVertex2d(0.0,0.1)
-    glTexCoord2d(1.0,1.0)
-    glVertex2d(0.1,0.1)
-    glTexCoord2d(1.0,0.0)
-    glVertex2d(0.1, 0.0)
+    glTexCoord2d(0.0,1.0)#画像左下
+    glVertex2d(0.0,32)
+    glTexCoord2d(0.0,0.0)#画像左上
+    glVertex2d(0.0,0.0)
+    glTexCoord2d(1.0,0.0)#画像右上
+    glVertex2d(32,0.0)
+    glTexCoord2d(1.0,1.0)#画像右下
+    glVertex2d(32, 32)
+    
     glEnd()
+
+    #test
+    """
+    glColor3d(1.0, 1.0, 1.0)
+    glLineWidth(3.0)
+
+    glBegin(GL_LINES)
+    glVertex2d(0.0, 0.0)
+    glVertex2d(32, 32)
+    glVertex2d(32, 0.0)
+    glVertex2d(0.0, 32)
+    glEnd()"""
+    #testend
 
     glGenerateMipmap(GL_TEXTURE_2D)
     glDisable(GL_TEXTURE_2D)
@@ -55,7 +70,7 @@ def window_refresh(window):
     display()
 
 def load_texture():
-    map1_path = os.path.join(os.path.dirname(__file__), u"data\\kusa.png")
+    map1_path = os.path.join(os.path.dirname(__file__), u"data\\TowaruIcon.png")
     img = Image.open(map1_path,'r')
     w,h = img.size
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img.tobytes())
