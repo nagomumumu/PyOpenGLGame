@@ -6,33 +6,37 @@ from PIL import Image
 
 
 def display():
-
+    maplist = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
     glClear(GL_COLOR_BUFFER_BIT)
+
+    #描画範囲の設定と原点の設定
+    viewport = (GLint * 4)()
+    glGetIntegerv(GL_VIEWPORT, viewport)
+
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    glOrtho(-0.5,viewport[2] - 0.5,viewport[3] - 0.5,-0.5,-1.0,1.0)
+
 
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)
     glEnable(GL_BLEND)
 
     glEnable(GL_TEXTURE_2D)
 
-    glMatrixMode(GL_PROJECTION)
+    glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
-    glPushMatrix()
-    glRotatef(60.0, 1.0, 1.0, 0.0)
 
     glBegin(GL_QUADS)
     glTexCoord2d(0.0,0.0)
-    glVertex3d(-0.9, 0.9, 0.0)
+    glVertex2d(0, 0)
     glTexCoord2d(0.0,1.0)
-    glVertex3d(-0.9,-0.9, 0.0)
+    glVertex2d(0.0,0.1)
     glTexCoord2d(1.0,1.0)
-    glVertex3d( 0.9,-0.9, 0.0)
+    glVertex2d(0.1,0.1)
     glTexCoord2d(1.0,0.0)
-    glVertex3d( 0.9, 0.9, 0.0)
+    glVertex2d(0.1, 0.0)
     glEnd()
-
-    glPopMatrix()
-    glMatrixMode(GL_MODELVIEW)
 
     glGenerateMipmap(GL_TEXTURE_2D)
     glDisable(GL_TEXTURE_2D)
@@ -41,7 +45,7 @@ def display():
 
     glfw.swap_buffers(window)
 
-    #glFlush()
+    glFlush()
 
 def init():
     glClearColor(0.0,0.0,1.0,1.0)
@@ -51,7 +55,7 @@ def window_refresh(window):
     display()
 
 def load_texture():
-    map1_path = os.path.join(os.path.dirname(__file__), u"data\\TowaruIcon.png")
+    map1_path = os.path.join(os.path.dirname(__file__), u"data\\kusa.png")
     img = Image.open(map1_path,'r')
     w,h = img.size
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img.tobytes())
@@ -76,6 +80,9 @@ glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)
 
 while not glfw.window_should_close(window):
     glfw.wait_events()
+    err = glGetError()
+    if err != GL_NO_ERROR:
+        print(err)
 
 window_refresh(window)
 glfw.terminate()
