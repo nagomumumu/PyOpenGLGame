@@ -4,20 +4,18 @@ import os
 from OpenGL.GL import*
 from PIL import Image
 texID = []
-img0 = None
-img1 = None
 
 class maps():
     def drawMap():
-        maplist = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+        maplist = [[0,1,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
         
         #0から4
         for i in range(5):
             for j in range(5):
-                if maplist[j][i]==0:
-                    glBindTexture(GL_TEXTURE_2D, img0)
+                if maplist[i][j]==0:
+                    glBindTexture(GL_TEXTURE_2D, 1)
                 else:
-                    glBindTexture(GL_TEXTURE_2D, img1)
+                    glBindTexture(GL_TEXTURE_2D, 2)
                 glBegin(GL_QUADS)
                 glTexCoord2d(0.0,1.0)#画像左下
                 glVertex2d(0.0+j*32,32+i*32)
@@ -87,13 +85,19 @@ def load_texture():
     map1_path = os.path.join(os.path.dirname(__file__), u"data\\tile.png")
     img0 = Image.open(map0_path,'r')
     img1 = Image.open(map1_path,'r')
+    texID=glGenTextures(2)
     w = 32
     h = 32
-    #テクスチャIDわからん!!!!
-    #メモリまわりもう少し勉強いる?調べる。
+    
+    
+    print(texID[0])
+    print(texID[1])
+    #テクスチャの生成と文字列変換
+    glBindTexture(GL_TEXTURE_2D, 1)
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img0.tobytes())
+    glBindTexture(GL_TEXTURE_2D, 2)
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img1.tobytes())
-    #glBindTexture(GL_TEXTURE_2D, texID)
+    
 
 def main():
     if not glfw.init():
@@ -108,6 +112,7 @@ def main():
     glfw.set_window_refresh_callback(window,window_refresh)
     glfw.make_context_current(window)
 
+    
     load_texture()
     init(window)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
