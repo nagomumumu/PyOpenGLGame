@@ -7,7 +7,11 @@ texID = []
 
 class maps():
     def drawMap():
-        maplist = [[0,1,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+        maplist = [ [0,1,0,0,0],
+                    [0,1,0,0,0],
+                    [0,1,1,1,0],
+                    [0,0,0,1,0],
+                    [0,0,0,1,0] ]
         
         #0から4
         for i in range(5):
@@ -16,6 +20,8 @@ class maps():
                     glBindTexture(GL_TEXTURE_2D, 1)
                 else:
                     glBindTexture(GL_TEXTURE_2D, 2)
+                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
+                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)   
                 glBegin(GL_QUADS)
                 glTexCoord2d(0.0,1.0)#画像左下
                 glVertex2d(0.0+j*32,32+i*32)
@@ -26,6 +32,8 @@ class maps():
                 glTexCoord2d(1.0,1.0)#画像右下
                 glVertex2d(32+j*32, 32+i*32)
                 glEnd()
+            
+                
 
 def display(window):
     glClear(GL_COLOR_BUFFER_BIT)
@@ -86,8 +94,8 @@ def load_texture():
     img0 = Image.open(map0_path,'r')
     img1 = Image.open(map1_path,'r')
     texID=glGenTextures(2)
-    w = 32
-    h = 32
+    w = 64
+    h = 64
     
     
     print(texID[0])
@@ -115,8 +123,7 @@ def main():
     
     load_texture()
     init(window)
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)
+    
 
     #ゲームループ
     while not glfw.window_should_close(window):
