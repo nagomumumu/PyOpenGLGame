@@ -7,15 +7,18 @@ texID = []
 
 class maps():
     def drawMap():
-        maplist = [ [0,1,0,0,0],
-                    [0,1,0,0,0],
-                    [0,1,1,1,0],
-                    [0,0,0,1,0],
-                    [0,0,0,1,0] ]
+        mc_size = 128
+        maplist = [ [0,1,0,0,0,0,0],
+                    [0,1,0,0,0,0,0],
+                    [0,1,1,1,0,0,0],
+                    [0,0,0,1,0,0,0],
+                    [0,0,0,1,0,0,0],
+                    [0,0,0,1,0,0,0],
+                    [0,0,0,1,0,0,0] ]
         
         #0から4
-        for i in range(5):
-            for j in range(5):
+        for i in range(7):
+            for j in range(7):
                 if maplist[i][j]==0:
                     glBindTexture(GL_TEXTURE_2D, 1)
                 else:
@@ -24,16 +27,30 @@ class maps():
                 glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)   
                 glBegin(GL_QUADS)
                 glTexCoord2d(0.0,1.0)#画像左下
-                glVertex2d(0.0+j*32,32+i*32)
+                glVertex2d(0.0+j*mc_size,mc_size+i*mc_size)
                 glTexCoord2d(0.0,0.0)#画像左上
-                glVertex2d(0.0+j*32,0.0+i*32)
+                glVertex2d(0.0+j*mc_size,0.0+i*mc_size)
                 glTexCoord2d(1.0,0.0)#画像右上
-                glVertex2d(32+j*32,0.0+i*32)
+                glVertex2d(mc_size+j*mc_size,0.0+i*mc_size)
                 glTexCoord2d(1.0,1.0)#画像右下
-                glVertex2d(32+j*32, 32+i*32)
+                glVertex2d(mc_size+j*mc_size, mc_size+i*mc_size)
                 glEnd()
             
-                
+class player():
+    def drawPlayer():
+        glBindTexture(GL_TEXTURE_2D, 3)
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)   
+        glBegin(GL_QUADS)
+        glTexCoord2d(0.0,1.0)#画像左下
+        glVertex2d(0.0,64)
+        glTexCoord2d(0.0,0.0)#画像左上
+        glVertex2d(0.0,0.0)
+        glTexCoord2d(1.0,0.0)#画像右上
+        glVertex2d(64,0.0)
+        glTexCoord2d(1.0,1.0)#画像右下
+        glVertex2d(64,64)
+        glEnd()
 
 def display(window):
     glClear(GL_COLOR_BUFFER_BIT)
@@ -57,19 +74,7 @@ def display(window):
     glLoadIdentity()
     
     maps.drawMap()
-
-    #test
-    """
-    glColor3d(1.0, 1.0, 1.0)
-    glLineWidth(3.0)
-
-    glBegin(GL_LINES)
-    glVertex2d(0.0, 0.0)
-    glVertex2d(32, 32)
-    glVertex2d(32, 0.0)
-    glVertex2d(0.0, 32)
-    glEnd()"""
-    #testend
+    player.drawPlayer()
 
     glGenerateMipmap(GL_TEXTURE_2D)
     glDisable(GL_TEXTURE_2D)
@@ -91,20 +96,21 @@ def window_refresh(window):
 def load_texture():
     map0_path = os.path.join(os.path.dirname(__file__), u"data\\kusa.png")
     map1_path = os.path.join(os.path.dirname(__file__), u"data\\tile.png")
+    map2_path = os.path.join(os.path.dirname(__file__), u"data\\player.png")
     img0 = Image.open(map0_path,'r')
     img1 = Image.open(map1_path,'r')
-    texID=glGenTextures(2)
+    img2 = Image.open(map2_path,'r')
+    texID=glGenTextures(3)
     w = 64
     h = 64
     
-    
-    print(texID[0])
-    print(texID[1])
     #テクスチャの生成と文字列変換
     glBindTexture(GL_TEXTURE_2D, 1)
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img0.tobytes())
     glBindTexture(GL_TEXTURE_2D, 2)
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img1.tobytes())
+    glBindTexture(GL_TEXTURE_2D, 3)
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img2.tobytes())
     
 
 def main():
