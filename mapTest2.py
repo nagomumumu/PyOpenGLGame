@@ -5,7 +5,23 @@ from OpenGL.GL import*
 from PIL import Image
 texID = []
 
+
+def keyboard(window, key, scancode, action, mods):
+    if key == glfw.KEY_UP:
+        maps.map_offset_h = maps.map_offset_h+5
+    if key == glfw.KEY_DOWN:
+        maps.map_offset_h = maps.map_offset_h-5
+    if key == glfw.KEY_RIGHT:
+        maps.map_offset_w = maps.map_offset_w-5
+    if key == glfw.KEY_LEFT:
+        maps.map_offset_w = maps.map_offset_w+5
+    
+    window_refresh(window)
+
 class maps():
+    map_offset_w = 0
+    map_offset_h = 0
+
     def drawMap():
         mc_size = 128
         maplist = [ [0,1,0,0,0,0,0],
@@ -27,29 +43,30 @@ class maps():
                 glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)   
                 glBegin(GL_QUADS)
                 glTexCoord2d(0.0,1.0)#画像左下
-                glVertex2d(0.0+j*mc_size,mc_size+i*mc_size)
+                glVertex3d(0.0+j*mc_size+maps.map_offset_w,mc_size+i*mc_size+maps.map_offset_h,0.0)
                 glTexCoord2d(0.0,0.0)#画像左上
-                glVertex2d(0.0+j*mc_size,0.0+i*mc_size)
+                glVertex3d(0.0+j*mc_size+maps.map_offset_w,0.0+i*mc_size+maps.map_offset_h,0.0)
                 glTexCoord2d(1.0,0.0)#画像右上
-                glVertex2d(mc_size+j*mc_size,0.0+i*mc_size)
+                glVertex3d(mc_size+j*mc_size+maps.map_offset_w,0.0+i*mc_size+maps.map_offset_h,0.0)
                 glTexCoord2d(1.0,1.0)#画像右下
-                glVertex2d(mc_size+j*mc_size, mc_size+i*mc_size)
+                glVertex3d(mc_size+j*mc_size+maps.map_offset_w, mc_size+i*mc_size+maps.map_offset_h,0.0)
                 glEnd()
             
 class player():
+
     def drawPlayer():
         glBindTexture(GL_TEXTURE_2D, 3)
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)   
         glBegin(GL_QUADS)
         glTexCoord2d(0.0,1.0)#画像左下
-        glVertex2d(0.0,64)
+        glVertex3d(0.0,128,1.0)
         glTexCoord2d(0.0,0.0)#画像左上
-        glVertex2d(0.0,0.0)
+        glVertex3d(0.0,0.0,1.0)
         glTexCoord2d(1.0,0.0)#画像右上
-        glVertex2d(64,0.0)
+        glVertex3d(128,0.0,1.0)
         glTexCoord2d(1.0,1.0)#画像右下
-        glVertex2d(64,64)
+        glVertex3d(128,128,1.0)
         glEnd()
 
 def display(window):
@@ -96,7 +113,8 @@ def window_refresh(window):
 def load_texture():
     map0_path = os.path.join(os.path.dirname(__file__), u"data\\kusa.png")
     map1_path = os.path.join(os.path.dirname(__file__), u"data\\tile.png")
-    map2_path = os.path.join(os.path.dirname(__file__), u"data\\player.png")
+    map2_path = os.path.join(os.path.dirname(__file__), u"data\\neko.png")
+
     img0 = Image.open(map0_path,'r')
     img1 = Image.open(map1_path,'r')
     img2 = Image.open(map2_path,'r')
@@ -111,6 +129,7 @@ def load_texture():
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img1.tobytes())
     glBindTexture(GL_TEXTURE_2D, 3)
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,img2.tobytes())
+    
     
 
 def main():
@@ -129,7 +148,8 @@ def main():
     
     load_texture()
     init(window)
-    
+    #glfw.set_mouse_button_callback(window, mouse_button)
+    glfw.set_key_callback(window, keyboard)
 
     #ゲームループ
     while not glfw.window_should_close(window):
